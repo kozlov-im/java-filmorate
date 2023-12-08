@@ -20,13 +20,13 @@ class UserControllerTest {
     private Validator validator;
 
     @BeforeEach
-    public void beforeEach(){
+    public void beforeEach() {
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         validator = factory.getValidator();
     }
 
     @Test
-    public void shouldCheckEmailExist(){
+    public void shouldCheckEmailExist() {
         User user = new User();
         user.setLogin("userLogin");
         user.setName("userName");
@@ -37,7 +37,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldCheckEmailIsBlank(){
+    public void shouldCheckEmailIsBlank() {
         User user = new User();
         user.setEmail("");
         user.setLogin("userLogin");
@@ -47,8 +47,9 @@ class UserControllerTest {
         List<String> validateMessage = violations.stream().map(v -> v.getMessage()).collect(Collectors.toList());
         Assertions.assertTrue(validateMessage.contains("Почта не может быть пустой"));
     }
+
     @Test
-    public void shouldCheckEmailIsCorrect(){
+    public void shouldCheckEmailIsCorrect() {
         User user = new User();
         user.setEmail("userNamemail.ru");
         user.setLogin("userLogin");
@@ -58,8 +59,9 @@ class UserControllerTest {
         List<String> validateMessage = violations.stream().map(v -> v.getMessage()).collect(Collectors.toList());
         Assertions.assertTrue(validateMessage.contains("Почта введена не корректно"));
     }
+
     @Test
-    public void shouldCheckLoginIsExist(){
+    public void shouldCheckLoginIsExist() {
         User user = new User();
         user.setEmail("userName@mail.ru");
         user.setName("userName");
@@ -70,7 +72,7 @@ class UserControllerTest {
     }
 
     @Test
-    public void shouldCheckLoginIsBlank(){
+    public void shouldCheckLoginIsBlank() {
         User user = new User();
         user.setEmail("userName@mail.ru");
         user.setLogin("");
@@ -80,8 +82,9 @@ class UserControllerTest {
         List<String> validateMessage = violations.stream().map(v -> v.getMessage()).collect(Collectors.toList());
         Assertions.assertTrue(validateMessage.contains("Логин не может быть пустым или содержать пробелы"));
     }
+
     @Test
-    public void shouldCheckLoginContainsWhitespaces(){
+    public void shouldCheckLoginContainsWhitespaces() {
         User user = new User();
         user.setEmail("userName@mail.ru");
         user.setLogin("log in");
@@ -91,8 +94,9 @@ class UserControllerTest {
         List<String> validateMessage = violations.stream().map(v -> v.getMessage()).collect(Collectors.toList());
         Assertions.assertTrue(validateMessage.contains("Логин не может быть пустым или содержать пробелы"));
     }
+
     @Test
-    public void shouldCheckBirthday(){
+    public void shouldCheckBirthday() {
         User user = new User();
         user.setEmail("userName@mail.ru");
         user.setLogin("login");
