@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -21,7 +19,7 @@ public class UserController {
     private int generatedId = 1;
 
     @PostMapping
-    private User create(@RequestBody @Valid User user) {
+    public User create(@RequestBody @Valid User user) {
         user.setId(generatedId++);
         if (user.getName() == null || user.getName().trim().equals("")) {
             user.setName(user.getLogin());
@@ -32,22 +30,22 @@ public class UserController {
     }
 
     @GetMapping
-    private List<User> returnUsers() {
+    public List<User> returnUsers() {
         return new ArrayList<>(users.values());
     }
 
     @PutMapping
-    private ResponseEntity<User> update(@RequestBody @Valid User user) {
+    public User update(@RequestBody @Valid User user) throws ValidationException {
         if (users.containsKey(user.getId())) {
             if (user.getName() == null || user.getName().trim().equals("")) {
                 user.setName(user.getLogin());
             }
             users.put(user.getId(), user);
             log.info("Пользователь с id = " + user.getId() + " успешно обновлен");
-            return ResponseEntity.ok(user);
+            return user;
         } else {
             log.info("Пользователь с id = " + user.getId() + " не найден");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(user);
+            throw new ValidationException("Пользователь с id = " + user.getId() + " не найден");
         }
     }
 }

@@ -2,8 +2,6 @@ package ru.yandex.practicum.filmorate.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -21,7 +19,7 @@ public class FilmController {
     private int generatedId = 1;
 
     @PostMapping
-    private Film create(@RequestBody @Valid Film film) {
+    public Film create(@RequestBody @Valid Film film) {
         film.setId(generatedId++);
         films.put(film.getId(), film);
         log.info("Фильм с id = " + film.getId() + " успешно добавлен");
@@ -29,19 +27,19 @@ public class FilmController {
     }
 
     @GetMapping
-    private List<Film> returnFilms() {
+    public List<Film> returnFilms() {
         return new ArrayList<>(films.values());
     }
 
     @PutMapping
-    private ResponseEntity<Film> update(@RequestBody Film film) {
+    public Film update(@RequestBody @Valid Film film) throws ValidationException {
         if (films.containsKey(film.getId())) {
             films.put(film.getId(), film);
             log.info("Фильм с id = " + film.getId() + " успешно обновлен");
-            return ResponseEntity.ok(film);
+            return film;
         } else {
             log.info("Фильм с id = " + film.getId() + " не найден");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(film);
+            throw new ValidationException("Фильм с id = " + film.getId() + " не найден");
         }
     }
 }
