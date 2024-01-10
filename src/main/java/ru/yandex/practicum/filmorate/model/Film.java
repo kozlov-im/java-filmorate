@@ -1,11 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
 import lombok.Data;
-import ru.yandex.practicum.filmorate.controller.FilmRelease;
+import ru.yandex.practicum.filmorate.validation.FilmRelease;
+
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -13,6 +16,17 @@ import java.time.LocalDate;
 @Data
 public class Film {
     private int id;
+    private Set<Integer> likes = new HashSet<>();
+
+    public void addLike(int userId) {
+        likes.add(userId);
+    }
+
+    public void removeLike(int userId) {
+        if (likes.contains(userId)) {
+            likes.remove(userId);
+        }
+    }
 
     @NotBlank(message = "Название фильма не может быть пустым")
     private String name;
