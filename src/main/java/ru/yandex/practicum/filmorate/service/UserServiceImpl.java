@@ -14,7 +14,7 @@ import java.util.Set;
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
-    private UserStorage userStorage;
+    private final UserStorage userStorage;
     private int generatedId = 1;
 
     public UserServiceImpl(UserStorage userStorage) {
@@ -43,12 +43,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<User> returnUsers() {
-        return userStorage.returnUsers();
+        List<User> userList = userStorage.returnUsers();
+        List<Integer> usersIdList = new ArrayList<>();
+        userList.stream().forEach(user -> usersIdList.add(user.getId()));
+        log.info("Список пользователей с id = " + usersIdList + " успешно получен");
+        return userList;
     }
 
     @Override
     public User getUserById(int id) throws NotFoundException {
-        return userStorage.getUserById(id);
+        User user = userStorage.getUserById(id);
+        log.info("Пользователь c id = " + user.getId() + " успешно получен");
+        return user;
     }
 
     @Override
@@ -58,6 +64,9 @@ public class UserServiceImpl implements UserService {
         for (Integer friendId : user.getFriends()) {
             usersList.add(userStorage.getUserById(friendId));
         }
+        List<Integer> friendsIdList = new ArrayList<>();
+        usersList.stream().forEach(user1 -> friendsIdList.add(user1.getId()));
+        log.info("Для пользователя c id = " + user.getId() + " успешно получен список друзей с id " + friendsIdList);
         return usersList;
     }
 
@@ -73,6 +82,9 @@ public class UserServiceImpl implements UserService {
                 }
             }
         }
+        List<Integer> commonFriendsIdList = new ArrayList<>();
+        commonFriends.stream().forEach(user1 -> commonFriendsIdList.add(user1.getId()));
+        log.info("Для пользователя c id = " + user.getId() + " и пользователя с id = " + otherUser.getId() + " успешно получен список общих друзей с id " + commonFriendsIdList);
         return commonFriends;
     }
 

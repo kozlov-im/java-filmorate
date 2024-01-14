@@ -6,13 +6,13 @@ import ru.yandex.practicum.filmorate.model.Film;
 import java.util.List;
 
 public interface FilmStorage {
-    public Film create(Film film);
+    Film create(Film film);
 
-    public List<Film> returnFilms();
+    List<Film> returnFilms();
 
-    public Film getFilmById(int id) throws NotFoundException;
+    Film getFilmById(int id) throws NotFoundException;
 
-    public Film update(Film film);
+    Film update(Film film);
 
-    public List<Film> getPopularFilms(String count);
+    List<Film> getPopularFilms(String count);
 }

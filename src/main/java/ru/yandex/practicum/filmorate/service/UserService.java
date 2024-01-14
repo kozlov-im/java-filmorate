@@ -7,19 +7,19 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.List;
 
 public interface UserService {
-    public User create(User user) throws NotFoundException;
+    User create(User user) throws NotFoundException;
 
-    public List<User> returnUsers();
+    List<User> returnUsers();
 
-    public User getUserById(int id) throws NotFoundException;
+    User getUserById(int id) throws NotFoundException;
 
-    public List<User> getFriendsForUser(int userId) throws NotFoundException;
+    List<User> getFriendsForUser(int userId) throws NotFoundException;
 
-    public List<User> getCommonFriendsForUser(int userId, int otherId) throws NotFoundException;
+    List<User> getCommonFriendsForUser(int userId, int otherId) throws NotFoundException;
 
-    public User update(User user) throws NotFoundException;
+    User update(User user) throws NotFoundException;
 
-    public User addToFriends(int userId, int friendId) throws NotFoundException, ValidationException;
+    User addToFriends(int userId, int friendId) throws NotFoundException, ValidationException;
 
-    public User deleteFromFriends(int userId, int friendId) throws NotFoundException;
+    User deleteFromFriends(int userId, int friendId) throws NotFoundException;
 }

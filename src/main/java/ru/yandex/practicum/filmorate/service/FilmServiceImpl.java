@@ -6,14 +6,15 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.validation.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Service
 @Slf4j
 public class FilmServiceImpl implements FilmService {
-    private FilmStorage filmStorage;
-    private UserService userService;
+    private final FilmStorage filmStorage;
+    private final UserService userService;
     private int generatedId = 1;
 
     public FilmServiceImpl(FilmStorage filmStorage, UserService userService) {
@@ -37,12 +38,18 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> returnFilms() {
-        return filmStorage.returnFilms();
+        List<Film> filmList = filmStorage.returnFilms();
+        List<Integer> filmsIdList = new ArrayList<>();
+        filmList.stream().forEach(film -> filmsIdList.add(film.getId()));
+        log.info("Список фильмов с id = " + filmsIdList + " успешно получен");
+        return filmList;
     }
 
     @Override
     public Film getFilmById(int id) throws NotFoundException {
-        return filmStorage.getFilmById(id);
+        Film film = filmStorage.getFilmById(id);
+        log.info("Фильм с id = " + film.getId() + " успешно получен");
+        return film;
     }
 
     @Override
@@ -77,6 +84,10 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public List<Film> getPopularFilms(String count) {
-        return filmStorage.getPopularFilms(count);
+        List<Film> filmList = filmStorage.getPopularFilms(count);
+        List<Integer> filmsIdList = new ArrayList<>();
+        filmList.stream().forEach(film -> filmsIdList.add(film.getId()));
+        log.info("Список популярных фильмов с id = " + filmsIdList + " успешно получен");
+        return filmList;
     }
 }

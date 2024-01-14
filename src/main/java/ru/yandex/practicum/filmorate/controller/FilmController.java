@@ -14,7 +14,7 @@ import java.util.List;
 public class FilmController {
 
     private FilmService filmService;
-    private final String defaultPopularFilmsAmount = "10";
+    private static final String DEFAULT_POPULAR_FILMS_AMOUNT = "10";
 
     @PostMapping("/films")
     public Film create(@RequestBody @Valid Film film) throws NotFoundException {
@@ -32,7 +32,7 @@ public class FilmController {
     }
 
     @GetMapping("/films/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = defaultPopularFilmsAmount) String count) {
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = DEFAULT_POPULAR_FILMS_AMOUNT) String count) {
         return filmService.getPopularFilms(count);
     }
 

@@ -6,11 +6,11 @@ import ru.yandex.practicum.filmorate.model.User;
 import java.util.List;
 
 public interface UserStorage {
-    public User create(User user);
+    User create(User user);
 
-    public List<User> returnUsers();
+    List<User> returnUsers();
 
-    public User getUserById(int id) throws NotFoundException;
+    User getUserById(int id) throws NotFoundException;
 
-    public User update(User user);
+    User update(User user);
 }
