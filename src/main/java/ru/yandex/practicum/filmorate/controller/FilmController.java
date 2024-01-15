@@ -1,45 +1,53 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.validation.NotFoundException;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
-@RequestMapping("/films")
+@AllArgsConstructor
 public class FilmController {
-    static final Logger log = LoggerFactory.getLogger(FilmController.class);
-    private Map<Integer, Film> films = new HashMap<>();
-    private int generatedId = 1;
 
-    @PostMapping
-    public Film create(@RequestBody @Valid Film film) {
-        film.setId(generatedId++);
-        films.put(film.getId(), film);
-        log.info("Фильм с id = " + film.getId() + " успешно добавлен");
-        return film;
+    private FilmService filmService;
+    private static final String DEFAULT_POPULAR_FILMS_AMOUNT = "10";
+
+    @PostMapping("/films")
+    public Film create(@RequestBody @Valid Film film) throws NotFoundException {
+        return filmService.create(film);
     }
 
-    @GetMapping
+    @GetMapping("/films")
     public List<Film> returnFilms() {
-        return new ArrayList<>(films.values());
+        return filmService.returnFilms();
     }
 
-    @PutMapping
-    public Film update(@RequestBody @Valid Film film) throws ValidationException {
-        if (films.containsKey(film.getId())) {
-            films.put(film.getId(), film);
-            log.info("Фильм с id = " + film.getId() + " успешно обновлен");
-            return film;
-        } else {
-            log.info("Фильм с id = " + film.getId() + " не найден");
-            throw new ValidationException("Фильм с id = " + film.getId() + " не найден");
-        }
+    @GetMapping("/films/{filmId}")
+    public Film getFilmById(@PathVariable int filmId) throws NotFoundException {
+        return filmService.getFilmById(filmId);
+    }
+
+    @GetMapping("/films/popular")
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = DEFAULT_POPULAR_FILMS_AMOUNT) String count) {
+        return filmService.getPopularFilms(count);
+    }
+
+    @PutMapping("/films")
+    public Film update(@RequestBody @Valid Film film) throws NotFoundException {
+        return filmService.update(film);
+    }
+
+    @PutMapping("/films/{filmId}/like/{userId}")
+    public Film setLike(@PathVariable int filmId, @PathVariable int userId) throws NotFoundException {
+        return filmService.setLike(filmId, userId);
+    }
+
+    @DeleteMapping("/films/{filmId}/like/{userId}")
+    public Film removeLike(@PathVariable int filmId, @PathVariable int userId) throws NotFoundException {
+        return filmService.removeLike(filmId, userId);
     }
 }
