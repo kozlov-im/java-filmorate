@@ -18,7 +18,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @JdbcTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
@@ -30,10 +29,10 @@ class FilmDbStorageTest {
 
     @BeforeEach
     public void beforeEach() {
-
         filmStorage = new FilmDbStorage(jdbcTemplate);
         userStorage = new UserDbStorage(jdbcTemplate);
     }
+
     @Test
     void testCreate() throws NotFoundException {
         Film film = new Film(1, "film 1", "film 1 description", LocalDate.of(1990, 1, 1), 90, new Mpa(1, "G"));
@@ -44,7 +43,6 @@ class FilmDbStorageTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(film);
-
     }
 
     @Test
@@ -132,7 +130,6 @@ class FilmDbStorageTest {
                 .isNotNull()
                 .usingRecursiveComparison()
                 .isEqualTo(expectedList);
-
     }
 
     @Test
