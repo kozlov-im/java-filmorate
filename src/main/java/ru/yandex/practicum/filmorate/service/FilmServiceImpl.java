@@ -5,17 +5,16 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.validation.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.validation.ValidationException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Slf4j
 public class FilmServiceImpl implements FilmService {
     private final FilmStorage filmStorage;
     private final UserService userService;
-    private int generatedId = 1;
 
     public FilmServiceImpl(FilmStorage filmStorage, UserService userService) {
         this.filmStorage = filmStorage;
@@ -24,20 +23,13 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film create(Film film) throws NotFoundException {
-        Set<Integer> usersLikes = film.getLikes();
-        if (usersLikes != null) {
-            for (Integer userId : usersLikes) {
-                userService.getUserById(userId);
-            }
-        }
-        film.setId(generatedId++);
-        filmStorage.create(film);
+        Film createdFilm = filmStorage.create(film);
         log.info("Фильм с id = " + film.getId() + " успешно добавлен");
-        return film;
+        return createdFilm;
     }
 
     @Override
-    public List<Film> returnFilms() {
+    public List<Film> returnFilms() throws NotFoundException {
         List<Film> filmList = filmStorage.returnFilms();
         List<Integer> filmsIdList = new ArrayList<>();
         filmList.stream().forEach(film -> filmsIdList.add(film.getId()));
@@ -65,12 +57,17 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public Film setLike(int filmId, int userId) throws NotFoundException {
+    public Film setLike(int filmId, int userId) throws NotFoundException, ValidationException {
         Film film = getFilmById(filmId);
         userService.getUserById(userId);
-        film.addLike(userId);
-        log.info("Пользователь id = " + userId + " установил лайк фильму id = " + filmId);
-        return film;
+        if (!film.getLikes().contains(userId)) {
+            film.addLike(userId);
+            Film returnedFilm = filmStorage.setLike(filmId, userId);
+            log.info("Пользователь id = " + userId + " установил лайк фильму id = " + filmId);
+            return returnedFilm;
+        } else {
+            throw new ValidationException("Пользователь id = " + userId + " уже установил лайк фильму id = " + filmId);
+        }
     }
 
     @Override
@@ -83,7 +80,7 @@ public class FilmServiceImpl implements FilmService {
     }
 
     @Override
-    public List<Film> getPopularFilms(String count) {
+    public List<Film> getPopularFilms(String count) throws NotFoundException {
         List<Film> filmList = filmStorage.getPopularFilms(count);
         List<Integer> filmsIdList = new ArrayList<>();
         filmList.stream().forEach(film -> filmsIdList.add(film.getId()));

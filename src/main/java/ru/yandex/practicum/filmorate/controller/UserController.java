@@ -21,7 +21,7 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> returnUsers() {
+    public List<User> returnUsers() throws NotFoundException {
         return userService.returnUsers();
     }
 

@@ -51,4 +51,14 @@ public class InMemoryFilmStorage implements FilmStorage {
         });
         return filmsList.stream().limit(Integer.parseInt(count)).collect(Collectors.toList());
     }
+
+    @Override
+    public Film setLike(int filmId, int userId) throws NotFoundException {
+        return null;
+    }
+
+    @Override
+    public Film removeLike(int filmId, int userId) throws NotFoundException {
+        return null;
+    }
 }

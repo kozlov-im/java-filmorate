@@ -8,9 +8,15 @@ import java.util.List;
 public interface UserStorage {
     User create(User user);
 
-    List<User> returnUsers();
+    List<User> returnUsers() throws NotFoundException;
 
     User getUserById(int id) throws NotFoundException;
 
-    User update(User user);
+    User update(User user) throws NotFoundException;
+
+    void addToFriends(int user, int friend);
+
+    void approveFriend(int friendshipInit, int user);
+
+    public User deleteFromFriends(int userId, int friendId) throws NotFoundException;
 }
