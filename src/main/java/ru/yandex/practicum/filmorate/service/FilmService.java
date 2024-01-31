@@ -9,7 +9,7 @@ import java.util.List;
 public interface FilmService {
     Film create(Film film) throws NotFoundException;
 
-    List<Film> returnFilms() throws NotFoundException;
+    List<Film> getAllFilms() throws NotFoundException;
 
     Film getFilmById(int id) throws NotFoundException;
 

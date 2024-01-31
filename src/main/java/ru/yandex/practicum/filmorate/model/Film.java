@@ -16,9 +16,21 @@ import java.util.stream.Collectors;
 @Data
 public class Film {
     private int id;
-    private Set<Integer> likes = new HashSet<>();
+    private Like like;
     private Set<Genre> genres = new HashSet<>();
     private Mpa mpa;
+
+    @NotBlank(message = "Название фильма не может быть пустым")
+    private String name;
+
+    @Size(max = 200, message = "Максимальная длина описания может быть не более 200 символов")
+    private String description;
+
+    @FilmRelease(message = "Некорректная дата релиза")
+    private LocalDate releaseDate;
+
+    @Positive(message = "Продолжительность должна быть положительной")
+    private int duration;
 
     public Film() {
     }
@@ -32,10 +44,6 @@ public class Film {
         this.mpa = mpa;
     }
 
-    public void addLike(int userId) {
-        likes.add(userId);
-    }
-
     public void addGenre(Genre genre) {
         genres.add(genre);
     }
@@ -43,22 +51,4 @@ public class Film {
     public List<Genre> getGenres() {
         return genres.stream().sorted(Comparator.comparingInt(Genre::getId)).collect(Collectors.toList());
     }
-
-    public void removeLike(int userId) {
-        if (likes.contains(userId)) {
-            likes.remove(userId);
-        }
-    }
-
-    @NotBlank(message = "Название фильма не может быть пустым")
-    private String name;
-
-    @Size(max = 200, message = "Максимальная длина описания может быть не более 200 символов")
-    private String description;
-
-    @FilmRelease(message = "Некорректная дата релиза")
-    private LocalDate releaseDate;
-
-    @Positive(message = "Продолжительность должна быть положительной")
-    private int duration;
 }

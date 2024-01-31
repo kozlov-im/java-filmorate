@@ -41,12 +41,12 @@ class UserDbStorageTest {
     }
 
     @Test
-    void testReturnUsers() throws NotFoundException {
+    void testGetAllUsers() throws NotFoundException {
         User user1 = new User(1, "Ivan Petrov", "vanya123", "user@email.ru", LocalDate.of(1990, 1, 1));
         User user2 = new User(2, "Vasiliy Ivanov", "vasya123", "vasya@email.ru", LocalDate.of(1991, 1, 1));
         userStorage.create(user1);
         userStorage.create(user2);
-        List<User> savedUser = userStorage.returnUsers();
+        List<User> savedUser = userStorage.getAllUsers();
         savedUser.sort(Comparator.comparingInt(User::getId));
         assertThat(savedUser.get(0)).isNotNull().usingRecursiveComparison().isEqualTo(user1);
         assertThat(savedUser.get(1)).isNotNull().usingRecursiveComparison().isEqualTo(user2);

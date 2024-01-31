@@ -26,11 +26,13 @@ class FilmDbStorageTest {
     private final JdbcTemplate jdbcTemplate;
     private FilmStorage filmStorage;
     private UserStorage userStorage;
+    private LikeDbStorage likeDbStorage;
 
     @BeforeEach
     public void beforeEach() {
         filmStorage = new FilmDbStorage(jdbcTemplate);
         userStorage = new UserDbStorage(jdbcTemplate);
+        likeDbStorage = new LikeDbStorage(jdbcTemplate);
     }
 
     @Test
@@ -51,7 +53,7 @@ class FilmDbStorageTest {
         Film film2 = new Film(2, "film 2", "film 2 description", LocalDate.of(1992, 1, 1), 90, new Mpa(1, "G"));
         filmStorage.create(film1);
         filmStorage.create(film2);
-        List<Film> savedFilms = filmStorage.returnFilms();
+        List<Film> savedFilms = filmStorage.getAllFilms();
         savedFilms.sort(Comparator.comparingInt(Film::getId));
         assertThat(savedFilms.get(0)).isNotNull().usingRecursiveComparison().isEqualTo(film1);
         assertThat(savedFilms.get(1)).isNotNull().usingRecursiveComparison().isEqualTo(film2);
@@ -106,21 +108,15 @@ class FilmDbStorageTest {
         userStorage.create(user2);
         userStorage.create(user3);
 
-        filmStorage.setLike(film1.getId(), user1.getId());
+        likeDbStorage.setLike(film1.getId(), user1.getId());
 
-        filmStorage.setLike(film2.getId(), user1.getId());
-        filmStorage.setLike(film2.getId(), user2.getId());
+        likeDbStorage.setLike(film2.getId(), user1.getId());
+        likeDbStorage.setLike(film2.getId(), user2.getId());
 
-        filmStorage.setLike(film3.getId(), user1.getId());
-        filmStorage.setLike(film3.getId(), user2.getId());
-        filmStorage.setLike(film3.getId(), user3.getId());
+        likeDbStorage.setLike(film3.getId(), user1.getId());
+        likeDbStorage.setLike(film3.getId(), user2.getId());
+        likeDbStorage.setLike(film3.getId(), user3.getId());
 
-        film1.addLike(1);
-        film2.addLike(1);
-        film2.addLike(2);
-        film3.addLike(1);
-        film3.addLike(2);
-        film3.addLike(3);
         List<Film> expectedList = List.of(film3, film2, film1);
 
         List<Film> popularFilms = new LinkedList<>(filmStorage.getPopularFilms("3"));
@@ -139,10 +135,9 @@ class FilmDbStorageTest {
         User user = new User(1, "Ivan Petrov", "vanya123", "user@email.ru", LocalDate.of(1990, 1, 1));
         userStorage.create(user);
 
-        filmStorage.setLike(film.getId(), user.getId());
+        likeDbStorage.setLike(film.getId(), user.getId());
 
         Film expectedFilm = new Film(1, "film", "film description", LocalDate.of(1991, 1, 1), 90, new Mpa(1, "G"));
-        expectedFilm.addLike(1);
 
         Film savedFilm = filmStorage.getFilmById(film.getId());
         assertThat(savedFilm)
@@ -158,8 +153,8 @@ class FilmDbStorageTest {
         User user = new User(1, "Ivan Petrov", "vanya123", "user@email.ru", LocalDate.of(1990, 1, 1));
         userStorage.create(user);
 
-        filmStorage.setLike(film.getId(), user.getId());
-        filmStorage.removeLike(film.getId(), user.getId());
+        likeDbStorage.setLike(film.getId(), user.getId());
+        likeDbStorage.removeLike(film.getId(), user.getId());
 
         Film savedFilm = filmStorage.getFilmById(film.getId());
         assertThat(savedFilm)

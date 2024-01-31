@@ -9,7 +9,7 @@ import java.util.List;
 public interface UserService {
     User create(User user) throws NotFoundException;
 
-    List<User> returnUsers() throws NotFoundException;
+    List<User> getAllUsers() throws NotFoundException;
 
     User getUserById(int id) throws NotFoundException;
 

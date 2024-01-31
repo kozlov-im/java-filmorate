@@ -8,7 +8,11 @@ import java.util.List;
 public interface UserStorage {
     User create(User user);
 
-    List<User> returnUsers() throws NotFoundException;
+    List<User> getAllUsers() throws NotFoundException;
+
+    List<Integer> getFriendsForUser(int userId);
+
+    List<Integer> getRequestedFriendsForUser(int userId);
 
     User getUserById(int id) throws NotFoundException;
 
@@ -18,5 +22,5 @@ public interface UserStorage {
 
     void approveFriend(int friendshipInit, int user);
 
-    public User deleteFromFriends(int userId, int friendId) throws NotFoundException;
+    User deleteFromFriends(int userId, int friendId) throws NotFoundException;
 }

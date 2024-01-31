@@ -10,12 +10,23 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-
 @Data
 public class User {
     private int id;
     private Set<Integer> friends = new HashSet<>();
     private Set<Integer> requestedFriends = new HashSet<>();
+
+    @NonWhitespace(message = "Логин не может быть пустым или содержать пробелы")
+    private String login;
+
+    private String name;
+
+    @NotBlank(message = "Почта не может быть пустой")
+    @Email(message = "Почта введена не корректно")
+    private String email;
+
+    @Past(message = "Дата не может быть в будущем")
+    private LocalDate birthday;
 
     public User() {
     }
@@ -26,13 +37,6 @@ public class User {
         this.name = name;
         this.email = email;
         this.birthday = birthday;
-    }
-
-    private void setFriends(Set<Integer> id) {
-    }
-
-    private void setRequestedFriends(Set<Integer> id) {
-
     }
 
     public void addFriend(int id) {
@@ -60,16 +64,4 @@ public class User {
             return null;
         }
     }
-
-    @NonWhitespace(message = "Логин не может быть пустым или содержать пробелы")
-    private String login;
-
-    private String name;
-
-    @NotBlank(message = "Почта не может быть пустой")
-    @Email(message = "Почта введена не корректно")
-    private String email;
-
-    @Past(message = "Дата не может быть в будущем")
-    private LocalDate birthday;
 }

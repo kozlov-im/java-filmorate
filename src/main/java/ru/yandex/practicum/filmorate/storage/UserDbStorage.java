@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validation.NotFoundException;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -38,44 +36,41 @@ public class UserDbStorage implements UserStorage {
     }
 
     @Override
-    public List<User> returnUsers() throws NotFoundException {
-        List<Integer> usersIdSet = jdbcTemplate.query("SELECT id FROM users", (rs, rowNum) -> rs.getInt("id"));
-        List<User> usersList = new ArrayList<>();
-        for (Integer id : usersIdSet) {
-            usersList.add(getUserById(id));
-        }
-        return usersList;
+    public List<User> getAllUsers() {
+        return jdbcTemplate.query("SELECT * FROM users", (rs, rowNum) -> new User(
+                rs.getInt("id"),
+                rs.getString("login"),
+                rs.getString("name"),
+                rs.getString("email"),
+                rs.getDate("birthday").toLocalDate()
+        ));
     }
 
     @Override
     public User getUserById(int id) throws NotFoundException {
         try {
             User user = jdbcTemplate.queryForObject("SELECT * FROM users WHERE id = ?", userRowMapper(), id);
-            String friends = "SELECT id FROM users WHERE id IN (" +
-                    "  SELECT friend_id FROM friends WHERE user_id = ?" +
-                    "  UNION" +
-                    "  SELECT user_id FROM friends WHERE friend_id = ? AND status = '1')";
-            jdbcTemplate.query(friends, new RowMapper<User>() {
-                @Override
-                public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    user.addFriend(rs.getInt("id"));
-                    return user;
-                }
-            }, id, id);
-
-            String requestedFriends = "SELECT id FROM users WHERE id IN (" +
-                    "  SELECT user_id FROM friends WHERE friend_id = ? AND status = '0')";
-            jdbcTemplate.query(requestedFriends, new RowMapper<User>() {
-                @Override
-                public User mapRow(ResultSet rs, int rowNum) throws SQLException {
-                    user.addFriendRequest(rs.getInt("id"));
-                    return user;
-                }
-            }, id);
+            user.setFriends(new HashSet<>(getFriendsForUser(user.getId())));
+            user.setRequestedFriends(new HashSet<>(getRequestedFriendsForUser(user.getId())));
             return user;
         } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Пользователь с id = " + id + " не найден");
         }
+    }
+
+    @Override
+    public List<Integer> getFriendsForUser(int userId) {
+        String sql = "SELECT id FROM users WHERE id IN (" +
+                "  SELECT friend_id FROM friends WHERE user_id = ?" +
+                "  UNION" +
+                "  SELECT user_id FROM friends WHERE friend_id = ? AND status = '1')";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getInt("id"), userId, userId);
+    }
+
+    @Override
+    public List<Integer> getRequestedFriendsForUser(int userId) {
+        return jdbcTemplate.query("SELECT id FROM users WHERE id IN (SELECT user_id FROM friends WHERE friend_id = ? AND status = 0)",
+                (rs, rowNum) -> rs.getInt("id"), userId);
     }
 
     @Override

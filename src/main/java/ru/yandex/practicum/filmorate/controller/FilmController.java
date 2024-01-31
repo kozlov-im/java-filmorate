@@ -23,8 +23,8 @@ public class FilmController {
     }
 
     @GetMapping("/films")
-    public List<Film> returnFilms() throws NotFoundException {
-        return filmService.returnFilms();
+    public List<Film> getAllFilms() throws NotFoundException {
+        return filmService.getAllFilms();
     }
 
     @GetMapping("/films/{filmId}")
