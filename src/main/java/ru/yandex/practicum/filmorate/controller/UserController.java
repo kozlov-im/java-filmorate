@@ -21,8 +21,8 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> returnUsers() {
-        return userService.returnUsers();
+    public List<User> getAllUsers() throws NotFoundException {
+        return userService.getAllUsers();
     }
 
     @GetMapping("/users/{userId}")

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.validation.NotFoundException;
+import ru.yandex.practicum.filmorate.validation.ValidationException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -22,8 +23,8 @@ public class FilmController {
     }
 
     @GetMapping("/films")
-    public List<Film> returnFilms() {
-        return filmService.returnFilms();
+    public List<Film> getAllFilms() throws NotFoundException {
+        return filmService.getAllFilms();
     }
 
     @GetMapping("/films/{filmId}")
@@ -32,7 +33,7 @@ public class FilmController {
     }
 
     @GetMapping("/films/popular")
-    public List<Film> getPopularFilms(@RequestParam(defaultValue = DEFAULT_POPULAR_FILMS_AMOUNT) String count) {
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = DEFAULT_POPULAR_FILMS_AMOUNT) String count) throws NotFoundException {
         return filmService.getPopularFilms(count);
     }
 
@@ -42,7 +43,7 @@ public class FilmController {
     }
 
     @PutMapping("/films/{filmId}/like/{userId}")
-    public Film setLike(@PathVariable int filmId, @PathVariable int userId) throws NotFoundException {
+    public Film setLike(@PathVariable int filmId, @PathVariable int userId) throws NotFoundException, ValidationException {
         return filmService.setLike(filmId, userId);
     }
 
